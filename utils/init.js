@@ -16,88 +16,89 @@ async function initRender(doc) {
 }
 
 async function initCore() {
-    const core = {
-        shape: getOctaHed(0xff00ff),
-        lightShine: new THREE.PointLight(
+  const coreTexture = new THREE.TextureLoader().load('assets/textures/crystal-texture.jpg')
+
+  const core = {
+      shape: getOctaHed({
+        color: 0xff00ff,
+        map: coreTexture
+      }),
+      lightShine: new THREE.PointLight(
+        0xff00ff, //color
+        1,        //intensity
+        150,       //distance
+        0.1        //decay
+      ),
+      spotLights: [
+        new THREE.SpotLight(  
           0xff00ff, //color
-          1,        //intensity
-          150,       //distance
-          0.1        //decay
+          0.1,        //intensity
+          0,        //distance
+          0.5,      //angle
+          0.8,        //penumbra
+          50         //decay
         ),
-        spotLights: [
-          new THREE.SpotLight(  
-            0x660066, //color
-            0.1,        //intensity
-            0,        //distance
-            0.5,      //angle
-            0.8,        //penumbra
-            50         //decay
-          ),
-          new THREE.SpotLight(  
-            0x660066, //color
-            0.1,        //intensity
-            0,        //distance
-            0.5,      //angle
-            0.8,        //penumbra
-            50         //decay
-          ),new THREE.SpotLight(  
-            0x660066, //color
-            0.1,        //intensity
-            0,        //distance
-            0.5,      //angle
-            0.8,        //penumbra
-            50         //decay
-          ),new THREE.SpotLight(  
-            0x660066, //color
-            0.1,        //intensity
-            0,        //distance
-            0.5,      //angle
-            0.8,        //penumbra
-            50         //decay
-          ),new THREE.SpotLight(  
-            0x660066, //color
-            0.1,        //intensity
-            0,        //distance
-            0.5,      //angle
-            0.8,        //penumbra
-            50         //decay
-          ),new THREE.SpotLight(  
-            0x660066, //color
-            0.1,        //intensity
-            0,        //distance
-            0.5,      //angle
-            0.8,        //penumbra
-            50         //decay
-          )
-        ]
-    };
+        new THREE.SpotLight(  
+          0xff00ff, //color
+          0.1,        //intensity
+          0,        //distance
+          0.5,      //angle
+          0.8,        //penumbra
+          50         //decay
+        ),new THREE.SpotLight(  
+          0xff00ff, //color
+          0.1,        //intensity
+          0,        //distance
+          0.5,      //angle
+          0.8,        //penumbra
+          50         //decay
+        ),new THREE.SpotLight(  
+          0xff00ff, //color
+          0.1,        //intensity
+          0,        //distance
+          0.5,      //angle
+          0.8,        //penumbra
+          50         //decay
+        ),new THREE.SpotLight(  
+          0xff00ff, //color
+          0.1,        //intensity
+          0,        //distance
+          0.5,      //angle
+          0.8,        //penumbra
+          50         //decay
+        ),new THREE.SpotLight(  
+          0xff00ff, //color
+          0.1,        //intensity
+          0,        //distance
+          0.5,      //angle
+          0.8,        //penumbra
+          50         //decay
+        )
+      ]
+  }; 
 
-    core.lightShine.position.set(0, 0, 0)
-    core.shape.add(core.lightShine)
+  core.lightShine.position.set(0, 0, 0);
+  core.shape.add(core.lightShine);
+  core.spotLights.forEach(light => {      
+    //Set up shadow properties for the light    
+    light.shadow.mapSize.width = 2048; // default    
+    light.shadow.mapSize.height = 2048; // default    
+    light.shadow.camera.near = 0.5; // default   
+    light.shadow.camera.far = 500; // default    
+    light.shadow.focus = 1; // default      
+    core.shape.add(light);  
+  });
 
-    core.spotLights.forEach(light => {
-    
-      //Set up shadow properties for the light
-      light.shadow.mapSize.width = 2048; // default
-      light.shadow.mapSize.height = 2048; // default
-      light.shadow.camera.near = 0.5; // default
-      light.shadow.camera.far = 500; // default
-      light.shadow.focus = 1; // default
-    
-      core.shape.add(light);
-    });
+  core.spotLights[0].position.set(0, 2, 0);
+  core.spotLights[1].position.set(0, -2, 0);
+  core.spotLights[2].position.set(2, 0, 0);
+  core.spotLights[3].position.set(-2, 0, 0);
+  core.spotLights[4].position.set(0, 0, 2);
+  core.spotLights[5].position.set(0, 0, -2);
 
-    core.spotLights[0].position.set(0, 2, 0);
-    core.spotLights[1].position.set(0, -2, 0);
-    core.spotLights[2].position.set(2, 0, 0);
-    core.spotLights[3].position.set(-2, 0, 0);
-    core.spotLights[4].position.set(0, 0, 2);
-    core.spotLights[5].position.set(0, 0, -2);
-
-    return core;
-
-    //core.castShadow = true;
-    //core.receiveShadow = true;
+  return core;
+  //core.castShadow = true;
+  //core.receiveShadow = true;
 }
 
 async function initTori() {
@@ -442,7 +443,9 @@ async function initTori() {
 async function initStars() {
     const stars = [
         {
-            shape: new Shape(getOctaHed(0x660066), null, {
+            shape: new Shape(getOctaHed({
+              color: 0xff00ff
+            }), null, {
                     x: getRnd(0.05, 0.1, 1),
                     y: getRnd(0.05, 0.1, 1),
                     z: getRnd(0.05, 0.1, 1)
@@ -452,14 +455,16 @@ async function initStars() {
                 z: 0
             }),
             lightShine: new THREE.PointLight(
-                0x660066, //color
+                0xff00ff, //color
                 20,        //intensity
                 250,       //distance
                 50        //decay
             )          
         },
         {
-            shape: new Shape(getOctaHed(0x660066), null, {
+            shape: new Shape(getOctaHed({
+              color: 0xff00ff
+            }), null, {
                     x: getRnd(0.05, 0.1, 1),
                     y: getRnd(0.05, 0.1, 1),
                     z: getRnd(0.05, 0.1, 1)
@@ -469,14 +474,16 @@ async function initStars() {
                 z: 0
             }),
             lightShine: new THREE.PointLight(
-                0x660066, //color
+                0xff00ff, //color
                 20,        //intensity
                 250,       //distance
                 50        //decay
             )         
         },
         {
-            shape: new Shape(getOctaHed(0x660066), null, {
+            shape: new Shape(getOctaHed({
+              color: 0xff00ff
+            }), null, {
                     x: getRnd(0.05, 0.1, 1),
                     y: getRnd(0.05, 0.1, 1),
                     z: getRnd(0.05, 0.1, 1)
@@ -486,14 +493,16 @@ async function initStars() {
                 z: 0
             }),
             lightShine: new THREE.PointLight(
-                0x660066, //color
+                0xff00ff, //color
                 20,        //intensity
                 250,       //distance
                 50        //decay
             )         
         },
         {
-            shape: new Shape(getOctaHed(0x660066), null, {
+            shape: new Shape(getOctaHed({
+              color: 0xff00ff
+            }), null, {
                     x: getRnd(0.05, 0.1, 1),
                     y: getRnd(0.05, 0.1, 1),
                     z: getRnd(0.05, 0.1, 1)
@@ -503,14 +512,16 @@ async function initStars() {
                 z: 0
             }),
             lightShine: new THREE.PointLight(
-                0x660066, //color
+                0xff00ff, //color
                 20,        //intensity
                 250,       //distance
                 50        //decay
             )           
         },
         {
-            shape: new Shape(getOctaHed(0x660066), null, {
+            shape: new Shape(getOctaHed({
+              color: 0xff00ff
+            }), null, {
                     x: getRnd(0.05, 0.1, 1),
                     y: getRnd(0.05, 0.1, 1),
                     z: getRnd(0.05, 0.1, 1)
@@ -520,14 +531,16 @@ async function initStars() {
                 z: 68
             }),
             lightShine: new THREE.PointLight(
-                0x660066, //color
+                0xff00ff, //color
                 20,        //intensity
                 250,       //distance
                 50        //decay
             )            
         },
         {
-            shape: new Shape(getOctaHed(0x660066), null, {
+            shape: new Shape(getOctaHed({
+              color: 0xff00ff
+            }), null, {
                     x: getRnd(0.05, 0.1, 1),
                     y: getRnd(0.05, 0.1, 1),
                     z: getRnd(0.05, 0.1, 1)
@@ -537,7 +550,7 @@ async function initStars() {
                 z: -68
             }),
             lightShine: new THREE.PointLight(
-                0x660066, //color
+                0xff00ff, //color
                 20,        //intensity
                 250,       //distance
                 50        //decay
@@ -577,7 +590,9 @@ async function initSpaceStuff(count) {
     const spaceStuff = Array();
 
     for(let x = 0; x < count; x++) {
-        const spaceThing = getOctaHed(0xff0066, getRnd(1, 5, 1), 1);
+        const spaceThing = getOctaHed({
+          color: 0xff0066
+        }, getRnd(1, 5, 1), 1);
 
         let z = THREE.MathUtils.randFloatSpread(THREE.MathUtils.randFloat(1500, 10000));
         let x = THREE.MathUtils.randFloatSpread(THREE.MathUtils.randFloat(1500, 10000));

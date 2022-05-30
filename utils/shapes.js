@@ -34,14 +34,18 @@ class Shape {
     }
 }
 
-function getOctaHed(color, radius, detail) {
+function getOctaHed(material, radius, detail) {
     if(!detail) {
         detail = 0;
     }
 
+    if(!material) {
+        material = {};
+    }
+
     return new Mesh(
         new OctahedronGeometry(radius, detail),
-        new MeshBasicMaterial({ color: color })
+        new MeshBasicMaterial(material)//{ color: color })
     );
 }
 

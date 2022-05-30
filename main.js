@@ -36,6 +36,8 @@ await init();
 //find a way to make load time faster, at the very least have the page wait for the canvas to render before everything else renders
 //fog or dust or something to show light rays 
 //^^maybe just look into god rays or something^^
+//mess around with different material types
+//maybe have a loading bar for the scene while its rendering
 
 //STARS//
 //fix outer star lighting
