@@ -1,5 +1,5 @@
 import { OctahedronGeometry, TorusGeometry, TorusKnotGeometry } from 'three';
-import { MeshStandardMaterial, MeshBasicMaterial, Mesh } from 'three';
+import { MeshPhongMaterial, MeshStandardMaterial, MeshPhysicalMaterial, Mesh } from 'three';
 
 class Shape {
     constructor(shape, initialRot, animRot, pos) {
@@ -45,7 +45,7 @@ function getOctaHed(material, radius, detail) {
 
     return new Mesh(
         new OctahedronGeometry(radius, detail),
-        new MeshBasicMaterial(material)//{ color: color })
+        new MeshPhongMaterial(material)//{ color: color })
     );
 }
 
@@ -54,9 +54,13 @@ function getTorus(
     tube,
     radialSegments,
     tubularSegments,
-    color,
+    material,
     arc
 ) {
+    if(!material) {
+        material = {};
+    }
+
   return new Mesh (
     new TorusGeometry(
         radius,
@@ -65,9 +69,7 @@ function getTorus(
         tubularSegments,
         arc
     ),
-    new MeshStandardMaterial({
-        color: color
-    })
+    new MeshPhysicalMaterial(material)
   );     
 }
 

@@ -102,12 +102,14 @@ async function initCore() {
 }
 
 async function initTori() {
+  const toriTexture = new THREE.TextureLoader().load('assets/textures/metal-texture.jpg')
+
     const tori = {};
 
     const innerJob = new Promise(resolve => {
         resolve([
             {
-              shape: getTorus(5, 1, 25, 25, 0xffffff),
+              shape: getTorus(5, 1, 25, 25, { map: toriTexture }),
               x: 0,
               y: 0,
               z: 0,
@@ -116,7 +118,7 @@ async function initTori() {
               zRot: -0.5
             },
             {
-              shape: getTorus(10, 1, 30, 200, 0xffffff, 1.75),
+              shape: getTorus(10, 1, 30, 200, { map: toriTexture }, 1.75),
               x: 1.5,
               y: 0.5,
               z: 5,
@@ -125,7 +127,7 @@ async function initTori() {
               zRot: 0.05
             },
             {
-              shape: getTorus(13, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(13, 1, 30, 200, { map: toriTexture }, 1),
               x: -2,
               y: 0,
               z: 1,
@@ -134,7 +136,7 @@ async function initTori() {
               zRot: 0.0065
             },
             {
-              shape: getTorus(13, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(13, 1, 30, 200, { map: toriTexture }, 1),
               x: 1,
               y: 0,
               z: 1,
@@ -148,7 +150,7 @@ async function initTori() {
     const middleJob = new Promise(resolve => {
         resolve([
             {
-              shape: getTorus(16, 1, 30, 200, 0xffffff, 2),
+              shape: getTorus(16, 1, 30, 200, { map: toriTexture }, 2),
               x: 1,
               y: 0.5,
               z: 0,
@@ -157,7 +159,7 @@ async function initTori() {
               zRot: 0.3
             },
             {
-              shape: getTorus(20, 1, 30, 200, 0xffffff, 1.5),
+              shape: getTorus(20, 1, 30, 200, { map: toriTexture }, 1.5),
               x: 0,
               y: 0,
               z: 0,
@@ -166,7 +168,7 @@ async function initTori() {
               zRot: 0.05
             },
             {
-              shape: getTorus(20, 1, 30, 200, 0xffffff, 1.5),
+              shape: getTorus(20, 1, 30, 200, { map: toriTexture }, 1.5),
               x: 1.57,
               y: 0,
               z: 0,
@@ -175,7 +177,7 @@ async function initTori() {
               zRot: 0.05
             },
             {
-              shape: getTorus(20, 1, 30, 200, 0xffffff, 1.5),
+              shape: getTorus(20, 1, 30, 200, { map: toriTexture }, 1.5),
               x: 3.14,
               y: 0,
               z: 0,
@@ -184,7 +186,7 @@ async function initTori() {
               zRot: 0.05
             },
             {
-              shape: getTorus(20, 1, 30, 200, 0xffffff, 1.5),
+              shape: getTorus(20, 1, 30, 200, { map: toriTexture }, 1.5),
               x: -1.57,
               y: 0,
               z: 0,
@@ -198,7 +200,7 @@ async function initTori() {
     const outerJob = new Promise(resolve => {
         resolve([
             {
-              shape: getTorus(30, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(30, 1, 30, 200, { map: toriTexture }, 1),
               x: 0,
               y: 0,
               z: 0,
@@ -207,7 +209,7 @@ async function initTori() {
               zRot: 0.01
             },
             {
-              shape: getTorus(30, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(30, 1, 30, 200, { map: toriTexture }, 1),
               x: 0,
               y: 1.57,
               z: 0,
@@ -216,7 +218,7 @@ async function initTori() {
               zRot: 0 //Must Stay Zero
             },  
             {
-              shape: getTorus(30, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(30, 1, 30, 200, { map: toriTexture }, 1),
               x: 0,
               y: 3.14,
               z: 0,
@@ -225,7 +227,7 @@ async function initTori() {
               zRot: 0.01
             },  
             {
-              shape: getTorus(30, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(30, 1, 30, 200, { map: toriTexture }, 1),
               x: 0,
               y: 4.71,
               z: 0,
@@ -234,7 +236,7 @@ async function initTori() {
               zRot: 0.01 
             }, 
             {
-              shape: getTorus(30, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(30, 1, 30, 200, { map: toriTexture }, 1),
               x: 0,
               y: 0,
               z: 3.14,
@@ -243,7 +245,7 @@ async function initTori() {
               zRot: 0.01,
             },  
             {
-              shape: getTorus(30, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(30, 1, 30, 200, { map: toriTexture }, 1),
               x: 0,
               y: 1.57,
               z: 3.14,
@@ -252,7 +254,7 @@ async function initTori() {
               zRot: 0.01 
             },  
             {
-              shape: getTorus(30, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(30, 1, 30, 200, { map: toriTexture }, 1),
               x: 0,
               y: 3.14,
               z: 3.14,
@@ -261,7 +263,7 @@ async function initTori() {
               zRot: 0.01,
             }, 
             {
-              shape: getTorus(30, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(30, 1, 30, 200, { map: toriTexture }, 1),
               x: 0,
               y: 4.71,
               z: 3.14,
@@ -275,7 +277,7 @@ async function initTori() {
     const exoJob = new Promise(resolve => {
         resolve([
             {
-              shape: getTorus(40, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(40, 1, 30, 200, { map: toriTexture }, 1),
               x: 0.785,
               y: 0,
               z: 0,
@@ -284,7 +286,7 @@ async function initTori() {
               zRot: 0.001
             },  
             {
-              shape: getTorus(40, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(40, 1, 30, 200, { map: toriTexture }, 1),
               x: 2.355,
               y: 0,
               z: 0,
@@ -293,7 +295,7 @@ async function initTori() {
               zRot: 0.001
             },  
             {
-              shape: getTorus(40, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(40, 1, 30, 200, { map: toriTexture }, 1),
               x: 3.925,
               y: 0,
               z: 0,
@@ -302,7 +304,7 @@ async function initTori() {
               zRot: 0.001
             },  
             {
-              shape: getTorus(40, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(40, 1, 30, 200, { map: toriTexture }, 1),
               x: 5.495,
               y: 0,
               z: 0,
@@ -311,7 +313,7 @@ async function initTori() {
               zRot: 0.001
             },
             {
-              shape: getTorus(40, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(40, 1, 30, 200, { map: toriTexture }, 1),
               x: 0.785,
               y: 3.14,
               z: 0,
@@ -320,7 +322,7 @@ async function initTori() {
               zRot: 0.001
             },  
             {
-              shape: getTorus(40, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(40, 1, 30, 200, { map: toriTexture }, 1),
               x: 2.355,
               y: 3.14,
               z: 0,
@@ -329,7 +331,7 @@ async function initTori() {
               zRot: 0.001
             },  
             {
-              shape: getTorus(40, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(40, 1, 30, 200, { map: toriTexture }, 1),
               x: 3.925,
               y: 3.14,
               z: 0,
@@ -338,7 +340,7 @@ async function initTori() {
               zRot: 0.001
             },  
             {
-              shape: getTorus(40, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(40, 1, 30, 200, { map: toriTexture }, 1),
               x: 5.495,
               y: 3.14,
               z: 0,
@@ -347,7 +349,7 @@ async function initTori() {
               zRot: 0.001
             },
             {
-              shape: getTorus(40, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(40, 1, 30, 200, { map: toriTexture }, 1),
               x: 1.57,
               y: 0.785,
               z: 0.58875,
@@ -356,7 +358,7 @@ async function initTori() {
               zRot: 0.001
             },
             {
-              shape: getTorus(40, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(40, 1, 30, 200, { map: toriTexture }, 1),
               x: 1.57,
               y: 0.785,
               z: 1.57,
@@ -365,7 +367,7 @@ async function initTori() {
               zRot: 0.001
             },
             {
-              shape: getTorus(40, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(40, 1, 30, 200, { map: toriTexture }, 1),
               x: 1.57,
               y: 2.355,
               z: 0.58875,
@@ -374,7 +376,7 @@ async function initTori() {
               zRot: 0.001
             },
             {
-              shape: getTorus(40, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(40, 1, 30, 200, { map: toriTexture }, 1),
               x: 4.71,
               y: 0.785,
               z: 4.71,
@@ -383,7 +385,7 @@ async function initTori() {
               zRot: 0.001
             },
             {
-              shape: getTorus(40, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(40, 1, 30, 200, { map: toriTexture }, 1),
               x: 4.71,
               y: 0.785,
               z: 0.58875,
@@ -392,7 +394,7 @@ async function initTori() {
               zRot: 0.001
             },  
             {
-              shape: getTorus(40, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(40, 1, 30, 200, { map: toriTexture }, 1),
               x: 4.71,
               y: 2.355,
               z: 0.58875,
@@ -401,7 +403,7 @@ async function initTori() {
               zRot: 0.001
             },  
             {
-              shape: getTorus(40, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(40, 1, 30, 200, { map: toriTexture }, 1),
               x: 4.71,
               y: 3.925,
               z: 0.58875,
@@ -410,7 +412,7 @@ async function initTori() {
               zRot: 0.001
             },  
             {
-              shape: getTorus(40, 1, 30, 200, 0xffffff, 1),
+              shape: getTorus(40, 1, 30, 200, { map: toriTexture }, 1),
               x: 4.71,
               y: 5.495,
               z: 0.58875,
