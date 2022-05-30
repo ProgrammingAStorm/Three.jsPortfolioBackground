@@ -28,29 +28,41 @@ let tori;
 await init();
 //GENERAL//
 //get texture, shine, reflextion, shine, and maybe alpha maps
+
 //add some more randomly generated things in space around
+
 //look into fixed camera path on scroll
-//make a texture thats just the solid space stuff texture with a border
-//^^same with the octahedrons maybe
+
 //make sure to clean up and finalize codebase ESPECIALLY the nomenclature! very cringe
+
 //find a way to make load time faster, at the very least have the page wait for the canvas to render before everything else renders
-//fog or dust or something to show light rays 
-//^^maybe just look into god rays or something^^
-//mess around with different material types
 //maybe have a loading bar for the scene while its rendering
 
+//fog or dust or something to show light rays 
+//^^maybe just look into god rays or something^^
+
 //STARS//
-//fix outer star lighting
+//fix outer star light pathing
+//clone light to have same params as core
 
 //CORE//
-//fix core color (and star color too)
-//fix core lighting
+//tweak light intensity and decay
 
 //SPACESTUFF//
 //fix spacestuff spawning coords
+//add lighting
+//emissive map
+//emissive color
+//normal map
 
 //KNOTS//
 //try using the spacestuff num gen method to randomize knot rotations
+//make init function
+//material
+//emissive map
+//emissive color
+//normal map
+//copy core maps
 
 //CLUSTERS
 //maybe make different clusters different colors or materials
@@ -62,6 +74,8 @@ await init();
 //if time and energy remain, fix shadows
 //implement settings in browser to allow for tweaking if graphics are too much
 //look into adding tori and stars to the core to try and a do a dramatic scenic draging affect of the core moving around as the page is scrolled
+//add long galactic arms to the knots
+//light trails on the stars
 
 
 
@@ -102,12 +116,14 @@ async function init() {
   const renderJob = initRender(document.querySelector('#bg'))
   .then(shape => {
     renderer = shape;
+    console.log("renderer done")
   });
 
   let coreReady = false;
   const coreJob = initCore().then(shape => {    
     core = shape;
     scene.add(core.shape);
+    console.log("core done")
     coreReady = true;
   });
 
@@ -115,8 +131,6 @@ async function init() {
   const toriJob = initTori().then(torus => {
     tori = torus;
     toriReady = true;
-
-    console.log(tori)
 
     tori.innerCluster.forEach(shape => {
       //shape.shape.castShadow = true;
@@ -146,6 +160,8 @@ async function init() {
       rotateShape(shape.shape, shape.x, shape.y, shape.z);
       scene.add(shape.shape);
     });
+
+    console.log("tori done")
   })
 
   /*const toriPopJob = new Promise(() => {
@@ -210,6 +226,8 @@ async function init() {
       core.shape.add(star.shape.shape);
       scene.add(star.lightShine)
     });
+
+    console.log("stars done")
   });
 
   const stuffJob = initSpaceStuff(25000).then(stuff => {
@@ -218,10 +236,13 @@ async function init() {
     spaceStuff.forEach(stuff => {
       scene.add(stuff.thing);
     });
+
+    console.log("stuff done")
   })
 
   const ambientJob = initAmbientLight().then(ambient =>{
     scene.add(ambient);
+    console.log("ambient done")
   })
 
   await renderJob;
@@ -237,12 +258,12 @@ function animate() {
   requestAnimationFrame(animate);
 
   //core
-  if(true) {
+  if(false) {
     rotateShape(core.shape, 0.1, 0.01, 0.01);
   }
 
   //clusters
-  if(true) {
+  if(false) {
     tori.innerCluster.forEach(shape => {
       rotateShape(shape.shape, shape.xRot, shape.yRot, shape.zRot);
     });
@@ -265,7 +286,7 @@ function animate() {
   }
 
   //stars
-  if(true) {
+  if(false) {
     stars.forEach(shape => {
       transformLight(shape.lightShine, shape.shape.shape)
   
@@ -279,7 +300,7 @@ function animate() {
   }
 
   //spacestuff
-  if(true) {
+  if(false) {
     spaceStuff.forEach(stuff => {
       rotateShape(
         stuff.thing,
