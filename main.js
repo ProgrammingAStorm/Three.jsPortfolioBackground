@@ -66,9 +66,10 @@ await init();
 //interval to randomize rotations
 
 //IMMEDIATE LIST//
-//tori async
 //async texture loading
 //reorganize and optimize init
+
+
 
 const gridHelper = new THREE.GridHelper(200, 50);
 scene.add(gridHelper);
@@ -97,7 +98,7 @@ async function init() {
         y: THREE.MathUtils.randFloatSpread(0.1),
         z: THREE.MathUtils.randFloatSpread(0.1)
       };
-    }, 1500)
+    }, 10)
 
     console.log("core done")
     coreReady = true;
@@ -108,36 +109,6 @@ async function init() {
   const toriJob = initTori().then(torus => {
     tori = torus;
     toriReady = true;
-
-    tori.innerCluster.forEach(shape => {
-      //shape.shape.castShadow = true;
-      //shape.shape.receiveShadow = true;
-    
-      rotateShape(shape.shape, shape.x, shape.y, shape.z);
-      scene.add(shape.shape);
-    });
-    tori.middleCluster.forEach(shape => {
-      //shape.shape.castShadow = true;
-      //shape.shape.receiveShadow = true;
-    
-      rotateShape(shape.shape, shape.x, shape.y, shape.z);
-      scene.add(shape.shape);
-    });
-    tori.outerCluster.forEach(shape => {
-      //shape.shape.castShadow = true;
-      //shape.shape.receiveShadow = true;
-    
-      rotateShape(shape.shape, shape.x, shape.y, shape.z);
-      scene.add(shape.shape);
-    }); 
-    tori.exoCluster.forEach(shape => {
-      //shape.shape.castShadow = true;
-      //shape.shape.receiveShadow = true;
-    
-      rotateShape(shape.shape, shape.x, shape.y, shape.z);
-      scene.add(shape.shape);
-    });
-
     console.log("tori done")
   })
 
@@ -153,58 +124,6 @@ async function init() {
 
     console.log('knots finished')
   });
-
-  /*const toriPopJob = new Promise(() => {
-    while(!toriReady) {
-      continue;
-    }
-
-    const innerJob = new Promise(() => {
-      tori.innerCluster.forEach(shape => {
-        //shape.shape.castShadow = true;
-        //shape.shape.receiveShadow = true;
-      
-        rotateShape(shape.shape, shape.x, shape.y, shape.z);
-        scene.add(shape.shape);
-      });
-    });
-
-    const middleJob = new Promise(() => {
-      tori.middleCluster.forEach(shape => {
-        //shape.shape.castShadow = true;
-        //shape.shape.receiveShadow = true;
-      
-        rotateShape(shape.shape, shape.x, shape.y, shape.z);
-        scene.add(shape.shape);
-      });
-    });
-
-    const outerJob = new Promise(() => {
-      tori.outerCluster.forEach(shape => {
-        //shape.shape.castShadow = true;
-        //shape.shape.receiveShadow = true;
-      
-        rotateShape(shape.shape, shape.x, shape.y, shape.z);
-        scene.add(shape.shape);
-      }); 
-    });
-
-    const exoJob = new Promise(() => {
-      tori.exoCluster.forEach(shape => {
-        //shape.shape.castShadow = true;
-        //shape.shape.receiveShadow = true;
-      
-        rotateShape(shape.shape, shape.x, shape.y, shape.z);
-        scene.add(shape.shape);
-      });
-    });
-
-    await innerJob;
-    await middleJob;
-    await outerJob;
-    await exoJob;
-  });*/
-
   
   console.log('stars started')
   const starJob = initStars().then(shape => {
@@ -240,9 +159,65 @@ async function init() {
   await coreJob;
   await toriJob;
   await knotJob;
-  ////await toriPopJob;
+  (async () => {
+    console.log('tori population started')
+    await populateTori();
+  })();
   await starJob;
   await stuffJob;
+
+  async function populateTori() {
+    while(!toriReady) {
+      continue;
+    }
+
+    const innerJob = new Promise(() => {  
+      tori.innerCluster.forEach(shape => {
+        //shape.shape.castShadow = true;
+        //shape.shape.receiveShadow = true;
+      
+        rotateShape(shape.shape, shape.x, shape.y, shape.z);
+        scene.add(shape.shape);
+      });
+    });
+  
+    const middleJob = new Promise(() => {  
+      tori.middleCluster.forEach(shape => {
+        //shape.shape.castShadow = true;
+        //shape.shape.receiveShadow = true;
+      
+        rotateShape(shape.shape, shape.x, shape.y, shape.z);
+        scene.add(shape.shape);
+      });
+    });
+  
+    const outerJob = new Promise(() => {  
+      tori.outerCluster.forEach(shape => {
+        //shape.shape.castShadow = true;
+        //shape.shape.receiveShadow = true;
+      
+        rotateShape(shape.shape, shape.x, shape.y, shape.z);
+        scene.add(shape.shape);
+      }); 
+    });
+  
+    const exoJob = new Promise(() => {
+      tori.exoCluster.forEach(shape => {
+        //shape.shape.castShadow = true;
+        //shape.shape.receiveShadow = true;
+      
+        rotateShape(shape.shape, shape.x, shape.y, shape.z);
+        scene.add(shape.shape);
+      });
+    });
+  
+    await innerJob;
+    await middleJob;
+    await outerJob;
+    await exoJob;
+    
+    console.log('tori population done')
+  }
 }
 
 function animate() {
@@ -268,7 +243,7 @@ function animate() {
     });
   }
   //knots
-  if(true) {
+  if(false) {
     torusKnots.forEach(shape => {
       rotateShape(shape.shape, shape.xRot, shape.yRot, shape.zRot);
     });
