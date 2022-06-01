@@ -2,6 +2,20 @@ import * as THREE from 'three';
 
 import { getOctaHed, getTorus, getTorusKnot, Shape } from './shapes';
 
+async function initTextures() {
+  const crystalTex = new THREE.TextureLoader().load('../assets/textures/crystal-texture.jpg');
+  const crystalNormMap = new THREE.TextureLoader().load('../assets/normal-maps/crystal-map.jpg');
+  const metalTex = new THREE.TextureLoader().load('../assets/textures/metal-texture.jpg');
+  const metalNormMap = new THREE.TextureLoader().load('../assets/normal-maps/metal-map.jpg');
+
+  return {
+    crystalTex: crystalTex,
+    crystalNormMap: crystalNormMap,
+    metalTex: metalTex,
+    metalNormMap: metalNormMap
+  };
+}
+
 async function initRender(doc) {
     let renderer = new THREE.WebGL1Renderer({
         canvas: doc
@@ -15,10 +29,7 @@ async function initRender(doc) {
     return renderer;
 }
 
-async function initCore() {
-  const coreTex = new THREE.TextureLoader().load('assets/textures/crystal-texture.jpg');
-  const coreNormMap = new THREE.TextureLoader().load('assets/normal-maps/crystal-map.jpg');
-
+async function initCore(coreTex, coreNormMap) {
   const core = {
       shape: getOctaHed({
         color: 0xff00ff,
@@ -110,10 +121,7 @@ async function initCore() {
   //core.receiveShadow = true;
 }
 
-async function initTori() {
-  const toriTex = new THREE.TextureLoader().load('assets/textures/metal-texture.jpg')
-  const toriNorMap = new THREE.TextureLoader().load('assets/normal-maps/metal-map.jpg')
-
+async function initTori(toriTex, toriNorMap) {
     const tori = {};
 
     const innerJob = new Promise(resolve => {
@@ -580,17 +588,14 @@ async function initKnots() {
   ];
 }
 
-async function initStars() {
-  const coreTex = new THREE.TextureLoader().load('assets/textures/crystal-texture.jpg');
-  const coreNormMap = new THREE.TextureLoader().load('assets/normal-maps/crystal-map.jpg');
-
+async function initStars(starTex, starNormMap) {
   const stars = [
     {
       shape: getOctaHed({
         color: 0xff00ff,
-        map: coreTex,
-        normalMap: coreNormMap,
-        emissiveMap: coreNormMap,
+        map: starTex,
+        normalMap: starNormMap,
+        emissiveMap: starNormMap,
         emissive: 0xff00ff
       }, 5,),
       initRot: {
@@ -612,9 +617,9 @@ async function initStars() {
     {
       shape: getOctaHed({
         color: 0xff00ff,
-        map: coreTex,
-        normalMap: coreNormMap,
-        emissiveMap: coreNormMap,
+        map: starTex,
+        normalMap: starNormMap,
+        emissiveMap: starNormMap,
         emissive: 0xff00ff
       }, 5,),
       initRot: {
@@ -636,9 +641,9 @@ async function initStars() {
     {
       shape: getOctaHed({
         color: 0xff00ff,
-        map: coreTex,
-        normalMap: coreNormMap,
-        emissiveMap: coreNormMap,
+        map: starTex,
+        normalMap: starNormMap,
+        emissiveMap: starNormMap,
         emissive: 0xff00ff
       }, 5,),
       initRot: {
@@ -660,9 +665,9 @@ async function initStars() {
     {
       shape: getOctaHed({
         color: 0xff00ff,
-        map: coreTex,
-        normalMap: coreNormMap,
-        emissiveMap: coreNormMap,
+        map: starTex,
+        normalMap: starNormMap,
+        emissiveMap: starNormMap,
         emissive: 0xff00ff
       }, 5,),
       initRot: {
@@ -684,9 +689,9 @@ async function initStars() {
     {
       shape: getOctaHed({
         color: 0xff00ff,
-        map: coreTex,
-        normalMap: coreNormMap,
-        emissiveMap: coreNormMap,
+        map: starTex,
+        normalMap: starNormMap,
+        emissiveMap: starNormMap,
         emissive: 0xff00ff
       }, 5,),
       initRot: {
@@ -708,9 +713,9 @@ async function initStars() {
     {
       shape: getOctaHed({
         color: 0xff00ff,
-        map: coreTex,
-        normalMap: coreNormMap,
-        emissiveMap: coreNormMap,
+        map: starTex,
+        normalMap: starNormMap,
+        emissiveMap: starNormMap,
         emissive: 0xff00ff
       }, 5,),
       initRot: {
@@ -751,10 +756,7 @@ async function initStars() {
   return stars;
 }
 
-async function initSpaceStuff(count) {
-  const stuffTex = new THREE.TextureLoader().load('assets/textures/crystal-texture.jpg');
-  const stuffNormMap = new THREE.TextureLoader().load('assets/normal-maps/crystal-map.jpg');
-
+async function initSpaceStuff(count, stuffTex, stuffNormMap) {
 
     const spaceStuff = Array();
 
@@ -766,6 +768,7 @@ async function initSpaceStuff(count) {
           emissive: 0xff0066,
           emissiveMap: stuffNormMap
         }, getRnd(1, 100, 1), 1);
+
         spaceThing.add(new THREE.PointLight(
           0xff0066, //color
           spaceThing.geometry.parameters.radius / 5,        //intensity
@@ -810,6 +813,7 @@ function getRnd(min, max, modifier) {
 }
 
 export {
+  initTextures,
   initRender,
   initCore,
   initTori,

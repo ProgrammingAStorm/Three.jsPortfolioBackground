@@ -3,8 +3,7 @@ import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import { getOctaHed, getTorus, getTorusKnot, Shape } from './utils/shapes';
-import { initRender, initCore, initTori, initKnots, initStars, initSpaceStuff } from './utils/init';
+import { initTextures, initRender, initCore, initTori, initKnots, initStars, initSpaceStuff } from './utils/init';
 
 const scene = new THREE.Scene();
 
@@ -12,8 +11,7 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 camera.position.set(50, 10, 25); //5, 5, 5 //50, 10, 25 //30, 10, 25
 let selector;
 
-//const backgroundTex = new THREE.TextureLoader().load('assets/textures/space-background.jpg')
-//scene.background = backgroundTex;
+let objTextures;
 
 let renderer;
 
@@ -43,6 +41,12 @@ await init();
 
 //god rays and lens glare at core
 
+//mist between all shapes
+
+//circle around everything. See how that works w fog
+
+//Try out promise.all
+
 //STARS//
 
 //CORE//
@@ -69,8 +73,6 @@ await init();
 //async texture loading
 //reorganize and optimize init
 
-
-
 const gridHelper = new THREE.GridHelper(200, 50);
 scene.add(gridHelper);
 
@@ -79,16 +81,23 @@ const controls = new OrbitControls(camera, renderer.domElement);
 animate();
 
 async function init() {
+  console.log('textures started')
+  const textureJob = initTextures().then(textures => {
+    objTextures = textures;
+    console.log('textures done')
+  })
+
   console.log('renderer started')
-  const renderJob = initRender(document.querySelector('#bg'))
-  .then(shape => {
+  const renderJob = initRender(document.querySelector('#bg')).then(shape => {
     renderer = shape;
     console.log("renderer done")
   });
 
+  await textureJob;
+
   let coreReady = false;
   console.log('core started')
-  const coreJob = initCore().then(shape => {    
+  const coreJob = initCore( objTextures.crystalTex, objTextures.crystalNormMap ).then(shape => {    
     core = shape;
     scene.add(core.shape);
 
@@ -105,11 +114,11 @@ async function init() {
   });
 
   console.log('tori started')
-  let toriReady = false;
-  const toriJob = initTori().then(torus => {
+  let toriPopJob;
+  const toriJob = initTori( objTextures.metalTex, objTextures.metalNormMap ).then(torus => {
     tori = torus;
-    toriReady = true;
     console.log("tori done")
+    toriPopJob = populateTori();
   })
 
   console.log('knots started')
@@ -126,7 +135,7 @@ async function init() {
   });
   
   console.log('stars started')
-  const starJob = initStars().then(shape => {
+  const starJob = initStars( objTextures.crystalTex, objTextures.crystalNormMap ).then(shape => {
     while(!coreReady) {
       continue;
     }
@@ -140,12 +149,12 @@ async function init() {
     console.log("stars done")
   });
 
-  console.log('stuff started')
-  const stuffJob = initSpaceStuff(100).then(stuff => {
+  console.log('stuff started');debugger
+  const stuffJob = initSpaceStuff( 100, objTextures.crystalTex, objTextures.crystalNormMap ).then(stuff => {
     spaceStuff = stuff;
 
     while(!coreReady) {
-      continue
+      continue;
     }
 
     spaceStuff.forEach(stuff => {
@@ -153,23 +162,22 @@ async function init() {
     });
 
     console.log("stuff done")
-  })
+  });
 
+  /*(async () => {
+    
+    //await populateTori();
+  })();*/
   await renderJob;
   await coreJob;
   await toriJob;
+  //await toriPopJob;
   await knotJob;
-  (async () => {
-    console.log('tori population started')
-    await populateTori();
-  })();
   await starJob;
   await stuffJob;
 
-  async function populateTori() {
-    while(!toriReady) {
-      continue;
-    }
+  async function populateTori() {debugger
+    console.log('tori population started')
 
     const innerJob = new Promise(() => {  
       tori.innerCluster.forEach(shape => {
@@ -211,10 +219,10 @@ async function init() {
       });
     });
   
-    await innerJob;
+    /*await innerJob;
     await middleJob;
     await outerJob;
-    await exoJob;
+    await exoJob;*/
     
     console.log('tori population done')
   }
@@ -289,6 +297,5 @@ function rotateShape(shape, x, y, z) {
     return
   }
 
-  scene.fog = new THREE.FogExp2(0x3333ff, parseFloat(document.querySelector('#x').value))
-   
+  scene.fog = new THREE.FogExp2(0x3333ff, parseFloat(document.querySelector('#x').value))  
 })*/
