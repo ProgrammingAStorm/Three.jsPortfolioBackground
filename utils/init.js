@@ -37,7 +37,7 @@ async function initCore(coreTex, coreNormMap) {
         normalMap: coreNormMap,
         emissiveMap: coreNormMap,
         emissive: 0xff00ff
-      }),
+      }, 4),
       rotation: {
         x: THREE.MathUtils.randFloatSpread(0.1),
         y: THREE.MathUtils.randFloatSpread(0.1),
@@ -771,7 +771,7 @@ async function initSpaceStuff(count, stuffTex, stuffNormMap) {
 
         spaceThing.add(new THREE.PointLight(
           0xff0066, //color
-          spaceThing.geometry.parameters.radius / 5,        //intensity
+          spaceThing.geometry.parameters.radius / 3,        //intensity
           10000,       //distance
           35        //decay
         ))
@@ -781,13 +781,13 @@ async function initSpaceStuff(count, stuffTex, stuffNormMap) {
         let y = THREE.MathUtils.randFloatSpread(THREE.MathUtils.randFloat(500, 10000));
 
         if(x >= -500 && x <= 500) {
-          x = 750;
+          x = 500;
         }
         if(y >= -500 && y <= 500) {
-          y = 750;
+          y = 500;
         }
         if(z >= -500 && z <= 500) {
-          z = 750;
+          z = 500;
         }
 
         spaceThing.position.set(
@@ -796,11 +796,18 @@ async function initSpaceStuff(count, stuffTex, stuffNormMap) {
             z
         )
 
+        const spaceThingObj = new THREE.Object3D();
+        spaceThingObj.add(spaceThing)
+
         spaceStuff.push({
             thing: spaceThing,
-            x: getRnd(0.0001, 3, 1),
-            y: getRnd(0.0001, 3, 1),
-            z: getRnd(0.0001, 3, 1)
+            thingObj: spaceThingObj,
+            x: THREE.MathUtils.randFloatSpread(0.1),
+            y: THREE.MathUtils.randFloatSpread(0.1),
+            z: THREE.MathUtils.randFloatSpread(0.1),
+            xOrb: THREE.MathUtils.randFloatSpread(1) * (0.75 / x),
+            yOrb: THREE.MathUtils.randFloatSpread(1) * (0.75 / y),
+            zOrb: THREE.MathUtils.randFloatSpread(1) * (0.75 / z),
       });
     }
     return spaceStuff; 

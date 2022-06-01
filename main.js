@@ -7,8 +7,8 @@ import { initTextures, initRender, initCore, initTori, initKnots, initStars, ini
 
 const scene = new THREE.Scene();
 
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 5000);
-camera.position.set(50, 10, 25); //5, 5, 5 //50, 10, 25 //30, 10, 25
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 12500);
+camera.position.set(50, 10, 25); //50, 10, 25 //5, 5, 5 //50, 10, 25 //30, 10, 25
 let selector;
 
 let objTextures;
@@ -25,9 +25,20 @@ let stars;
 
 let spaceStuff;
 
-scene.fog = new THREE.FogExp2(0x3333ff, 0.00025)
+const shape = new THREE.Mesh(new THREE.SphereGeometry(5000), new THREE.MeshBasicMaterial(
+  {color: 0x000009, side: THREE.BackSide}
+))
+scene.add(shape)
+
+scene.fog = new THREE.FogExp2(0x000e4d, 0.00045)
 
 await init();
+
+const asd = new THREE.Mesh(new THREE.OctahedronGeometry(10), new THREE.MeshBasicMaterial())
+asd.position.set(0, 125, 0)
+const dsa = new THREE.Object3D();
+dsa.add(asd);
+scene.add(dsa)
 
 //GENERAL//
 //add some more randomly generated things in space around
@@ -38,27 +49,25 @@ await init();
 
 //find a way to make load time faster, at the very least have the page wait for the canvas to render before everything else renders
 //maybe have a loading bar for the scene while its rendering
+//Try out promise.all or maybe parallel.js to speed up and generally do init() better
 
 //god rays and lens glare at core
 
-//mist between all shapes
+//proper init function for the sphere
 
-//circle around everything. See how that works w fog
+//proper init function for the octahedron
 
-//Try out promise.all
+//responsive to resizing
 
 //STARS//
 
 //CORE//
 
 //SPACESTUFF//
-//fix orbits around core
 
 //KNOTS//
 
 //CLUSTERS
-//mess with tori segment geometry
-//make the tori init async
 
 //LAST-MINUTE MAYBES//
 //async animate
@@ -67,10 +76,18 @@ await init();
 //look into adding tori and stars to the core to try and a do a dramatic scenic draging affect of the core moving around as the page is scrolled
 //add long galactic arms to the knots
 //light trails on the stars
-//interval to randomize rotations
+//light trails on tori
+//lazers from stars to core
+//spotlights
+//more knots maybe bigger better larger more spinny stuff on the outeside. just push the limits and see how far you can go
 
 //IMMEDIATE LIST//
-//async texture loading
+//proper init function for the sphere
+//proper init function for the octahedron // mpre of them
+//god rays and lens glare at core
+//Try out promise.all or maybe parallel.js to speed up and generally do init() better
+//light trails on the stars
+//light trails on tori
 //reorganize and optimize init
 
 const gridHelper = new THREE.GridHelper(200, 50);
@@ -101,13 +118,13 @@ async function init() {
     core = shape;
     scene.add(core.shape);
 
-    setInterval(() => {
+    /*setInterval(() => {
       core.rotation = {
         x: THREE.MathUtils.randFloatSpread(0.1),
         y: THREE.MathUtils.randFloatSpread(0.1),
         z: THREE.MathUtils.randFloatSpread(0.1)
       };
-    }, 10)
+    }, 10000)*/
 
     console.log("core done")
     coreReady = true;
@@ -149,16 +166,12 @@ async function init() {
     console.log("stars done")
   });
 
-  console.log('stuff started');debugger
+  console.log('stuff started'); 
   const stuffJob = initSpaceStuff( 100, objTextures.crystalTex, objTextures.crystalNormMap ).then(stuff => {
     spaceStuff = stuff;
 
-    while(!coreReady) {
-      continue;
-    }
-
     spaceStuff.forEach(stuff => {
-      core.shape.add(stuff.thing);
+      scene.add(stuff.thingObj);
     });
 
     console.log("stuff done")
@@ -176,7 +189,7 @@ async function init() {
   await starJob;
   await stuffJob;
 
-  async function populateTori() {debugger
+  async function populateTori() { 
     console.log('tori population started')
 
     const innerJob = new Promise(() => {  
@@ -231,12 +244,15 @@ async function init() {
 function animate() {
   requestAnimationFrame(animate);
 
+  rotateShape(asd, 0.05, 0.05, 0.05)
+  rotateShape(dsa, 0.01, -0.01, 0.01)
+
   //core
-  if(false) {
+  if(true) {
     rotateShape(core.shape, core.rotation.x, core.rotation.y, core.rotation.z);
   }
   //clusters
-  if(false) {
+  if(true) {
     tori.innerCluster.forEach(shape => {
       rotateShape(shape.shape, shape.xRot, shape.yRot, shape.zRot);
     });
@@ -251,24 +267,24 @@ function animate() {
     });
   }
   //knots
-  if(false) {
+  if(true) {
     torusKnots.forEach(shape => {
       rotateShape(shape.shape, shape.xRot, shape.yRot, shape.zRot);
     });
   }
   //stars
-  if(false) {
+  if(true) {
     stars.forEach(shape => {  
       rotateShape(
-        shape.shape.shape,
-        shape.shape.animRot.x,
-        shape.shape.animRot.y,
-        shape.shape.animRot.z
+        shape.shape,
+        shape.animRot.x,
+        shape.animRot.y,
+        shape.animRot.z
       );
     });
   }
   //spacestuff
-  if(false) {
+  if(true) {
     spaceStuff.forEach(stuff => {
       rotateShape(
         stuff.thing,
@@ -276,6 +292,13 @@ function animate() {
         stuff.y,
         stuff.z
       );
+
+      rotateShape(
+        stuff.thingObj,
+        stuff.xOrb,
+        stuff.yOrb,
+        stuff.zOrb
+      )
     })
   }
   
@@ -297,5 +320,5 @@ function rotateShape(shape, x, y, z) {
     return
   }
 
-  scene.fog = new THREE.FogExp2(0x3333ff, parseFloat(document.querySelector('#x').value))  
+  scene.fog = new THREE.FogExp2(0x000e4d, parseFloat(document.querySelector('#x').value))  
 })*/
