@@ -23,8 +23,8 @@ async function initRender(doc) {
 
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // renderer.shadowMap.enabled = true;
+    // renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     return renderer;
 }
@@ -559,6 +559,58 @@ async function initTori(toriTex, toriNorMap) {
     return tori;
 }
 
+async function initOctahedra(count) {
+  const octahedra = Array();
+
+  for(let i = 0; i < count; i++) {
+    const octahedron = getOctaHed({ color: 'white', emissive: 'white' }, THREE.MathUtils.randFloat(0.1, 15));
+    const octahedronObj = new THREE.Object3D();
+
+    let z = THREE.MathUtils.randFloatSpread(THREE.MathUtils.randFloat(350, 500));
+    let x = THREE.MathUtils.randFloatSpread(THREE.MathUtils.randFloat(350, 500));
+    let y = THREE.MathUtils.randFloatSpread(THREE.MathUtils.randFloat(350, 500));
+
+    if(x >= -125 && x <= 125) {
+      x = 125 * Math.sign(x);
+    }
+    if(y >= -125 && y <= 125) {
+      y = 125 * Math.sign(y);
+    }
+    if(z >= -125 && z <= 125) {
+      z = 125 * Math.sign(z);
+    }
+
+    octahedron.position.set( x, y, z );
+
+    octahedronObj.add(octahedron);
+
+    octahedra.push({
+      shape: {
+        item: octahedron,
+        x: THREE.MathUtils.randFloatSpread(0.1),
+        y: THREE.MathUtils.randFloatSpread(0.1),
+        z: THREE.MathUtils.randFloatSpread(0.1)
+      },
+      obj: {
+        item: octahedronObj,
+        x: THREE.MathUtils.randFloatSpread(0.1),
+        y: THREE.MathUtils.randFloatSpread(0.1),
+        z: THREE.MathUtils.randFloatSpread(0.1)
+      }
+    });
+  }
+
+  return octahedra;
+}
+
+async function initSphere() {
+  const sphere = new THREE.Mesh(new THREE.SphereGeometry(5000), new THREE.MeshBasicMaterial(
+    {color: 0x000009, side: THREE.BackSide}
+  ))
+
+  return sphere;
+}
+
 async function initKnots() {
   return [
     {
@@ -781,13 +833,13 @@ async function initSpaceStuff(count, stuffTex, stuffNormMap) {
         let y = THREE.MathUtils.randFloatSpread(THREE.MathUtils.randFloat(500, 10000));
 
         if(x >= -500 && x <= 500) {
-          x = 500;
+          x = 500 * Math.sign(x);
         }
         if(y >= -500 && y <= 500) {
-          y = 500;
+          y = 500 * Math.sign(y);
         }
         if(z >= -500 && z <= 500) {
-          z = 500;
+          z = 500 * Math.sign(z);
         }
 
         spaceThing.position.set(
@@ -824,6 +876,8 @@ export {
   initRender,
   initCore,
   initTori,
+  initOctahedra,
+  initSphere,
   initKnots,
   initStars,
   initSpaceStuff

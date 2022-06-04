@@ -3,12 +3,13 @@ import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import { initTextures, initRender, initCore, initTori, initKnots, initStars, initSpaceStuff } from './utils/init';
+import { initTextures, initRender, initCore, initSphere, initTori, initOctahedra, initKnots, initStars, initSpaceStuff } from './utils/init';
 
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 12500);
-camera.position.set(50, 10, 25); //50, 10, 25 //5, 5, 5 //50, 10, 25 //30, 10, 25
+camera.position.set(5, 5, 5); //50, 10, 25 //5, 5, 5 //50, 10, 25 //30, 10, 25
+
 let selector;
 
 let objTextures;
@@ -19,26 +20,24 @@ let core;
 
 let tori;
 
+let octahedra;
+
+let sphere
+
 let torusKnots;
 
 let stars;
 
 let spaceStuff;
 
-const shape = new THREE.Mesh(new THREE.SphereGeometry(5000), new THREE.MeshBasicMaterial(
-  {color: 0x000009, side: THREE.BackSide}
-))
-scene.add(shape)
-
 scene.fog = new THREE.FogExp2(0x000e4d, 0.00045)
 
-await init();
+// const canvas1 = document.querySelector('#bg')
+// const gl1 = canvas1.getContext('webgl')
+// console.log(gl1)
 
-const asd = new THREE.Mesh(new THREE.OctahedronGeometry(10), new THREE.MeshBasicMaterial())
-asd.position.set(0, 125, 0)
-const dsa = new THREE.Object3D();
-dsa.add(asd);
-scene.add(dsa)
+
+await init();
 
 //GENERAL//
 //add some more randomly generated things in space around
@@ -58,6 +57,10 @@ scene.add(dsa)
 //proper init function for the octahedron
 
 //responsive to resizing
+
+//catch too many uniforms and try to reinit with less polys
+
+//needs to work in browser with github pages so it doesn't need to query a server that doesn't exist
 
 //STARS//
 
@@ -80,18 +83,15 @@ scene.add(dsa)
 //lazers from stars to core
 //spotlights
 //more knots maybe bigger better larger more spinny stuff on the outeside. just push the limits and see how far you can go
+//ring around core inside of the knots big big big and spinning fast
+//very last minute try n avoid having things colide
 
 //IMMEDIATE LIST//
-//proper init function for the sphere
-//proper init function for the octahedron // mpre of them
 //god rays and lens glare at core
 //Try out promise.all or maybe parallel.js to speed up and generally do init() better
 //light trails on the stars
 //light trails on tori
 //reorganize and optimize init
-
-const gridHelper = new THREE.GridHelper(200, 50);
-scene.add(gridHelper);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -131,12 +131,30 @@ async function init() {
   });
 
   console.log('tori started')
-  let toriPopJob;
+  let toriPopJob; //THIS IS BEING USED. LEAVE IT HERE
   const toriJob = initTori( objTextures.metalTex, objTextures.metalNormMap ).then(torus => {
     tori = torus;
     console.log("tori done")
     toriPopJob = populateTori();
   })
+
+  console.log('octahedra started')
+  const octahedraJob = initOctahedra(10).then(shapes => {
+    octahedra = shapes;
+
+    octahedra.forEach(shape => {
+      scene.add(shape.obj.item);
+    });
+
+    console.log('octahedra done')
+  });
+
+  console.log('sphere started')
+  const sphereJob = initSphere().then(shape => {
+    sphere = shape;
+    scene.add(sphere);
+    console.log('sphere done')
+  });
 
   console.log('knots started')
   const knotJob = initKnots().then(knots => {
@@ -148,7 +166,7 @@ async function init() {
       scene.add(knot.shape);
     });
 
-    console.log('knots finished')
+    console.log('knots done')
   });
   
   console.log('stars started')
@@ -184,6 +202,8 @@ async function init() {
   await renderJob;
   await coreJob;
   await toriJob;
+  await octahedraJob;
+  await sphereJob;
   //await toriPopJob;
   await knotJob;
   await starJob;
@@ -244,9 +264,6 @@ async function init() {
 function animate() {
   requestAnimationFrame(animate);
 
-  rotateShape(asd, 0.05, 0.05, 0.05)
-  rotateShape(dsa, 0.01, -0.01, 0.01)
-
   //core
   if(true) {
     rotateShape(core.shape, core.rotation.x, core.rotation.y, core.rotation.z);
@@ -264,6 +281,23 @@ function animate() {
     });
     tori.exoCluster.forEach(shape => {
       rotateShape(shape.shape, shape.xRot, shape.yRot, shape.zRot);
+    });
+  }
+  //octahedra
+  if(true) {
+    octahedra.forEach(octahedron => {
+      rotateShape(
+        octahedron.shape.item,
+        octahedron.shape.x,
+        octahedron.shape.y,
+        octahedron.shape.z
+      );
+      rotateShape(
+        octahedron.obj.item,
+        octahedron.obj.x,
+        octahedron.obj.y,
+        octahedron.obj.z
+      );
     });
   }
   //knots
