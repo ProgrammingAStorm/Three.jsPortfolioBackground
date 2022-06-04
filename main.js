@@ -1,6 +1,8 @@
 import './style.css';
 
 import * as THREE from 'three';
+import * as POSTPROCESSING from 'postprocessing';
+
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import { initTextures, initRender, initCore, initSphere, initTori, initOctahedra, initKnots, initStars, initSpaceStuff } from './utils/init';
@@ -38,6 +40,22 @@ scene.fog = new THREE.FogExp2(0x000e4d, 0.00045)
 
 
 await init();
+
+let godraysEffect = new POSTPROCESSING.GodRaysEffect(camera, core.shape, {
+  resolutionScale: 1,
+  density: 1,
+  decay: 0.98,
+  weight: 0.1,
+  samples: 196,
+  exposure: 1,
+});
+let renderPass = new POSTPROCESSING.RenderPass(scene, camera);
+
+let effectPass = new POSTPROCESSING.EffectPass(camera,godraysEffect);
+effectPass.renderToScreen = true;
+let composer = new POSTPROCESSING.EffectComposer(renderer);
+composer.addPass(renderPass);
+composer.addPass(effectPass);
 
 //GENERAL//
 //add some more randomly generated things in space around
@@ -84,6 +102,10 @@ await init();
 //spotlights
 //more knots maybe bigger better larger more spinny stuff on the outeside. just push the limits and see how far you can go
 //ring around core inside of the knots big big big and spinning fast
+//post processing everywhere
+//add lots of god rays to things and mess with color depth, depth of field, and bloom
+//play with new materials
+//glowy ropes from octahedra to core
 //very last minute try n avoid having things colide
 
 //IMMEDIATE LIST//
@@ -174,13 +196,11 @@ async function init() {
     while(!coreReady) {
       continue;
     }
-
     stars = shape;
     stars.forEach(star => {
       core.shape.add(star.shape);
       //scene.add(star.lightShine)
     });
-
     console.log("stars done")
   });
 
@@ -206,7 +226,7 @@ async function init() {
   await sphereJob;
   //await toriPopJob;
   await knotJob;
-  await starJob;
+  //await starJob;
   await stuffJob;
 
   async function populateTori() { 
@@ -307,7 +327,7 @@ function animate() {
     });
   }
   //stars
-  if(true) {
+  if(false) {
     stars.forEach(shape => {  
       rotateShape(
         shape.shape,
@@ -338,7 +358,8 @@ function animate() {
   
   controls.update();
   
-  renderer.render(scene, camera);
+  composer.render(0.1);
+  //renderer.render(scene, camera);
 }
 
 function rotateShape(shape, x, y, z) {
