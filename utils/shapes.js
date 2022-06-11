@@ -1,39 +1,6 @@
 import { OctahedronGeometry, TorusGeometry, TorusKnotGeometry } from 'three';
 import { MeshPhongMaterial, MeshToonMaterial, MeshPhysicalMaterial, Mesh } from 'three';
 
-class Shape {
-    constructor(shape, initialRot, animRot, pos) {
-        this.shape = shape;
-        
-        if(!initialRot) {
-            this.initialRot = {
-                x: 0,
-                y: 0,
-                z: 0
-            };
-        }
-        this.initialRot = initialRot;
-
-        if(!animRot) {
-            this.animRot = {
-                x: 0,
-                y: 0,
-                z: 0
-            };
-        }
-        this.animRot = animRot;
-
-        if(!pos) {
-            this.pos = {
-                x: 0,
-                y: 0,
-                z: 0
-            }
-        }
-        this.pos = pos;
-    }
-}
-
 function getOctaHed(material, radius, detail) {
     if(!detail) {
         detail = 0;
@@ -103,6 +70,5 @@ function getTorusKnot(
 export {
     getOctaHed,
     getTorus,
-    getTorusKnot,
-    Shape
+    getTorusKnot
 };

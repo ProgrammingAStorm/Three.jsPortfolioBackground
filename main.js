@@ -1,18 +1,18 @@
 import './style.css';
 
 import * as THREE from 'three';
-import * as POSTPROCESSING from 'postprocessing';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import { initTextures, initRender, initCore, initSphere, initTori, initOctahedra, initKnots, initStars, initSpaceStuff } from './utils/init';
+import * as INIT from './utils/init';
 
 const scene = new THREE.Scene();
 
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 12500);
-camera.position.set(5, 5, 5); //50, 10, 25 //5, 5, 5 //50, 10, 25 //30, 10, 25
+scene.fog = new THREE.FogExp2(0x000e4d, 0.00045);
 
-let selector;
+const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 12500);
+
+camera.position.set(5, 5, 5);
 
 let objTextures;
 
@@ -32,88 +32,9 @@ let stars;
 
 let spaceStuff;
 
-scene.fog = new THREE.FogExp2(0x000e4d, 0.00045)
-
-// const canvas1 = document.querySelector('#bg')
-// const gl1 = canvas1.getContext('webgl')
-// console.log(gl1)
-
+let composer;
 
 await init();
-
-let godraysEffect = new POSTPROCESSING.GodRaysEffect(camera, core.shape, {
-  resolutionScale: 1,
-  density: 1,
-  decay: 0.98,
-  weight: 0.1,
-  samples: 196,
-  exposure: 1,
-});
-let renderPass = new POSTPROCESSING.RenderPass(scene, camera);
-
-let effectPass = new POSTPROCESSING.EffectPass(camera,godraysEffect);
-effectPass.renderToScreen = true;
-let composer = new POSTPROCESSING.EffectComposer(renderer);
-composer.addPass(renderPass);
-composer.addPass(effectPass);
-
-//GENERAL//
-//add some more randomly generated things in space around
-
-//look into fixed camera path on scroll
-
-//make sure to clean up and finalize codebase ESPECIALLY the nomenclature! very cringe
-
-//find a way to make load time faster, at the very least have the page wait for the canvas to render before everything else renders
-//maybe have a loading bar for the scene while its rendering
-//Try out promise.all or maybe parallel.js to speed up and generally do init() better
-
-//god rays and lens glare at core
-
-//proper init function for the sphere
-
-//proper init function for the octahedron
-
-//responsive to resizing
-
-//catch too many uniforms and try to reinit with less polys
-
-//needs to work in browser with github pages so it doesn't need to query a server that doesn't exist
-
-//STARS//
-
-//CORE//
-
-//SPACESTUFF//
-
-//KNOTS//
-
-//CLUSTERS
-
-//LAST-MINUTE MAYBES//
-//async animate
-//if time and energy remain, fix shadows
-//implement settings in browser to allow for tweaking if graphics are too much
-//look into adding tori and stars to the core to try and a do a dramatic scenic draging affect of the core moving around as the page is scrolled
-//add long galactic arms to the knots
-//light trails on the stars
-//light trails on tori
-//lazers from stars to core
-//spotlights
-//more knots maybe bigger better larger more spinny stuff on the outeside. just push the limits and see how far you can go
-//ring around core inside of the knots big big big and spinning fast
-//post processing everywhere
-//add lots of god rays to things and mess with color depth, depth of field, and bloom
-//play with new materials
-//glowy ropes from octahedra to core
-//very last minute try n avoid having things colide
-
-//IMMEDIATE LIST//
-//god rays and lens glare at core
-//Try out promise.all or maybe parallel.js to speed up and generally do init() better
-//light trails on the stars
-//light trails on tori
-//reorganize and optimize init
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -121,13 +42,13 @@ animate();
 
 async function init() {
   console.log('textures started')
-  const textureJob = initTextures().then(textures => {
+  const textureJob = INIT.initTextures().then(textures => {
     objTextures = textures;
     console.log('textures done')
   })
 
   console.log('renderer started')
-  const renderJob = initRender(document.querySelector('#bg')).then(shape => {
+  const renderJob = INIT.initRender(document.querySelector('#bg')).then(shape => {
     renderer = shape;
     console.log("renderer done")
   });
@@ -136,17 +57,17 @@ async function init() {
 
   let coreReady = false;
   console.log('core started')
-  const coreJob = initCore( objTextures.crystalTex, objTextures.crystalNormMap ).then(shape => {    
+  const coreJob = INIT.initCore( objTextures.crystalTex, objTextures.crystalNormMap ).then(shape => {    
     core = shape;
     scene.add(core.shape);
 
-    /*setInterval(() => {
+    setInterval(() => {
       core.rotation = {
         x: THREE.MathUtils.randFloatSpread(0.1),
         y: THREE.MathUtils.randFloatSpread(0.1),
         z: THREE.MathUtils.randFloatSpread(0.1)
       };
-    }, 10000)*/
+    }, 10000)
 
     console.log("core done")
     coreReady = true;
@@ -154,14 +75,14 @@ async function init() {
 
   console.log('tori started')
   let toriPopJob; //THIS IS BEING USED. LEAVE IT HERE
-  const toriJob = initTori( objTextures.metalTex, objTextures.metalNormMap ).then(torus => {
+  const toriJob = INIT.initTori( objTextures.metalTex, objTextures.metalNormMap ).then(torus => {
     tori = torus;
     console.log("tori done")
     toriPopJob = populateTori();
   })
 
   console.log('octahedra started')
-  const octahedraJob = initOctahedra(10).then(shapes => {
+  const octahedraJob = INIT.initOctahedra(10).then(shapes => {
     octahedra = shapes;
 
     octahedra.forEach(shape => {
@@ -172,14 +93,14 @@ async function init() {
   });
 
   console.log('sphere started')
-  const sphereJob = initSphere().then(shape => {
+  const sphereJob = INIT.initSphere().then(shape => {
     sphere = shape;
     scene.add(sphere);
     console.log('sphere done')
   });
 
   console.log('knots started')
-  const knotJob = initKnots().then(knots => {
+  const knotJob = INIT.initKnots().then(knots => {
     torusKnots = knots;
 
     torusKnots.forEach(knot => {
@@ -192,7 +113,7 @@ async function init() {
   });
   
   console.log('stars started')
-  const starJob = initStars( objTextures.crystalTex, objTextures.crystalNormMap ).then(shape => {
+  const starJob = INIT.initStars( objTextures.crystalTex, objTextures.crystalNormMap ).then(shape => {
     while(!coreReady) {
       continue;
     }
@@ -205,7 +126,7 @@ async function init() {
   });
 
   console.log('stuff started'); 
-  const stuffJob = initSpaceStuff( 100, objTextures.crystalTex, objTextures.crystalNormMap ).then(stuff => {
+  const stuffJob = INIT.initSpaceStuff( 100, objTextures.crystalTex, objTextures.crystalNormMap ).then(stuff => {
     spaceStuff = stuff;
 
     spaceStuff.forEach(stuff => {
@@ -215,19 +136,41 @@ async function init() {
     console.log("stuff done")
   });
 
-  /*(async () => {
-    
-    //await populateTori();
-  })();*/
   await renderJob;
   await coreJob;
+
+  const composerJob = INIT.initComposer(
+    renderer, 
+    [      
+      await INIT.initRenderPass(scene, camera),
+
+      await INIT.initEffectPass(camera, ...[
+
+        await INIT.initGodRays(camera, core.shape, {
+          resolutionScale: 1,
+          density: 10,
+          decay: 0.98,
+          weight: 0.1125,
+          samples: 196,
+          exposure: 1,
+        }),
+
+        await INIT.initSmaaEffect(),
+      ]),
+    ]
+  ).then(cmpsr => {
+    composer = cmpsr;
+  })
+
   await toriJob;
   await octahedraJob;
   await sphereJob;
   //await toriPopJob;
   await knotJob;
-  //await starJob;
+  await starJob;
   await stuffJob;
+
+  await composerJob;
 
   async function populateTori() { 
     console.log('tori population started')
@@ -327,7 +270,7 @@ function animate() {
     });
   }
   //stars
-  if(false) {
+  if(true) {
     stars.forEach(shape => {  
       rotateShape(
         shape.shape,
@@ -358,8 +301,7 @@ function animate() {
   
   controls.update();
   
-  composer.render(0.1);
-  //renderer.render(scene, camera);
+  composer.render();
 }
 
 function rotateShape(shape, x, y, z) {
@@ -368,12 +310,12 @@ function rotateShape(shape, x, y, z) {
   shape.rotation.z += z;
 }
 
-/*document.querySelector('#change').addEventListener('click', event => {
-  event.preventDefault()
+window.addEventListener('resize', () => {
+  renderer.setPixelRatio(window.devicePixelRatio);
 
-  if(!parseFloat(document.querySelector('#x').value)) {
-    return
-  }
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
 
-  scene.fog = new THREE.FogExp2(0x000e4d, parseFloat(document.querySelector('#x').value))  
-})*/
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  composer.setSize( window.innerWidth, window.innerHeight )
+})
