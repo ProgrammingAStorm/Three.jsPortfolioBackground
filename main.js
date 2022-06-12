@@ -41,23 +41,20 @@ const controls = new OrbitControls(camera, renderer.domElement);
 animate();
 
 async function init() {
-  console.log('textures started')
-  const textureJob = INIT.initTextures().then(textures => {
-    objTextures = textures;
-    console.log('textures done')
-  })
-
   console.log('renderer started')
   const renderJob = INIT.initRender(document.querySelector('#bg')).then(shape => {
     renderer = shape;
     console.log("renderer done")
   });
 
-  await textureJob;
+  console.log('textures started')
+  await INIT.initTextures().then(textures => {
+    objTextures = textures;
+    console.log('textures done')
+  })
 
-  let coreReady = false;
   console.log('core started')
-  const coreJob = INIT.initCore( objTextures.crystalTex, objTextures.crystalNormMap ).then(shape => {    
+  INIT.initCore( objTextures.crystalTex, objTextures.crystalNormMap ).then(async shape => {    
     core = shape;
     scene.add(core.shape);
 
@@ -70,19 +67,55 @@ async function init() {
     }, 10000)
 
     console.log("core done")
-    coreReady = true;
+
+    await renderJob;
+
+    INIT.initComposer(
+      renderer, 
+      [      
+        await INIT.initRenderPass(scene, camera),
+  
+        await INIT.initEffectPass(camera, ...[
+  
+          await INIT.initGodRays(camera, core.shape, {
+            resolutionScale: 1,
+            density: 10,
+            decay: 0.98,
+            weight: 0.1125,
+            samples: 196,
+            exposure: 1,
+          }),
+  
+          await INIT.initSmaaEffect(),
+        ]),
+      ]
+    ).then(cmpsr => {
+      composer = cmpsr;
+    })
+
+    console.log('stars started')
+    INIT.initStars( objTextures.crystalTex, objTextures.crystalNormMap ).then(shape => {
+      stars = shape;
+      stars.forEach(star => {
+        core.shape.add(star.shape);
+        //scene.add(star.lightShine)
+      });
+      console.log("stars done")
+    });
   });
 
   console.log('tori started')
-  let toriPopJob; //THIS IS BEING USED. LEAVE IT HERE
-  const toriJob = INIT.initTori( objTextures.metalTex, objTextures.metalNormMap ).then(torus => {
+  INIT.initTori( objTextures.metalTex, objTextures.metalNormMap ).then(torus => {
     tori = torus;
     console.log("tori done")
-    toriPopJob = populateTori();
+    populateTori()
+    .then(() => {
+      console.log('tori population done')
+    });
   })
 
   console.log('octahedra started')
-  const octahedraJob = INIT.initOctahedra(10).then(shapes => {
+  INIT.initOctahedra(10).then(shapes => {
     octahedra = shapes;
 
     octahedra.forEach(shape => {
@@ -93,14 +126,14 @@ async function init() {
   });
 
   console.log('sphere started')
-  const sphereJob = INIT.initSphere().then(shape => {
+  INIT.initSphere().then(shape => {
     sphere = shape;
     scene.add(sphere);
     console.log('sphere done')
   });
 
   console.log('knots started')
-  const knotJob = INIT.initKnots().then(knots => {
+  INIT.initKnots().then(knots => {
     torusKnots = knots;
 
     torusKnots.forEach(knot => {
@@ -111,22 +144,9 @@ async function init() {
 
     console.log('knots done')
   });
-  
-  console.log('stars started')
-  const starJob = INIT.initStars( objTextures.crystalTex, objTextures.crystalNormMap ).then(shape => {
-    while(!coreReady) {
-      continue;
-    }
-    stars = shape;
-    stars.forEach(star => {
-      core.shape.add(star.shape);
-      //scene.add(star.lightShine)
-    });
-    console.log("stars done")
-  });
 
   console.log('stuff started'); 
-  const stuffJob = INIT.initSpaceStuff( 100, objTextures.crystalTex, objTextures.crystalNormMap ).then(stuff => {
+  INIT.initSpaceStuff( 100, objTextures.crystalTex, objTextures.crystalNormMap ).then(stuff => {
     spaceStuff = stuff;
 
     spaceStuff.forEach(stuff => {
@@ -136,46 +156,21 @@ async function init() {
     console.log("stuff done")
   });
 
-  await renderJob;
-  await coreJob;
-
-  const composerJob = INIT.initComposer(
-    renderer, 
-    [      
-      await INIT.initRenderPass(scene, camera),
-
-      await INIT.initEffectPass(camera, ...[
-
-        await INIT.initGodRays(camera, core.shape, {
-          resolutionScale: 1,
-          density: 10,
-          decay: 0.98,
-          weight: 0.1125,
-          samples: 196,
-          exposure: 1,
-        }),
-
-        await INIT.initSmaaEffect(),
-      ]),
-    ]
-  ).then(cmpsr => {
-    composer = cmpsr;
+  window.addEventListener('resize', () => {
+    renderer.setPixelRatio(window.devicePixelRatio);
+  
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    composer.setSize( window.innerWidth, window.innerHeight )
   })
-
-  await toriJob;
-  await octahedraJob;
-  await sphereJob;
-  //await toriPopJob;
-  await knotJob;
-  await starJob;
-  await stuffJob;
-
-  await composerJob;
+  
 
   async function populateTori() { 
     console.log('tori population started')
 
-    const innerJob = new Promise(() => {  
+    new Promise(() => {  
       tori.innerCluster.forEach(shape => {
         //shape.shape.castShadow = true;
         //shape.shape.receiveShadow = true;
@@ -185,7 +180,7 @@ async function init() {
       });
     });
   
-    const middleJob = new Promise(() => {  
+    new Promise(() => {  
       tori.middleCluster.forEach(shape => {
         //shape.shape.castShadow = true;
         //shape.shape.receiveShadow = true;
@@ -195,7 +190,7 @@ async function init() {
       });
     });
   
-    const outerJob = new Promise(() => {  
+    new Promise(() => {  
       tori.outerCluster.forEach(shape => {
         //shape.shape.castShadow = true;
         //shape.shape.receiveShadow = true;
@@ -205,7 +200,7 @@ async function init() {
       }); 
     });
   
-    const exoJob = new Promise(() => {
+    new Promise(() => {
       tori.exoCluster.forEach(shape => {
         //shape.shape.castShadow = true;
         //shape.shape.receiveShadow = true;
@@ -214,13 +209,6 @@ async function init() {
         scene.add(shape.shape);
       });
     });
-  
-    /*await innerJob;
-    await middleJob;
-    await outerJob;
-    await exoJob;*/
-    
-    console.log('tori population done')
   }
 }
 
@@ -310,12 +298,3 @@ function rotateShape(shape, x, y, z) {
   shape.rotation.z += z;
 }
 
-window.addEventListener('resize', () => {
-  renderer.setPixelRatio(window.devicePixelRatio);
-
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  composer.setSize( window.innerWidth, window.innerHeight )
-})
