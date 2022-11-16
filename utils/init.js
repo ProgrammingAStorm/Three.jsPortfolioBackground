@@ -3,17 +3,11 @@ import * as POSTPROCESSING from 'postprocessing';
 
 import { getOctaHed, getTorus, getTorusKnot } from './shapes';
 
-import crystalImg from '../assets/textures/crystal-texture.jpg';
-import crystalNormImg from '../assets/normal-maps/crystal-map.jpg';
-import metalImg from '../assets/textures/metal-texture.jpg';
-import metalNormImg from '../assets/normal-maps/metal-map.jpg';
-
 async function initTextures() {
-
-  const crystalTex = new THREE.TextureLoader().load(crystalImg);
-  const crystalNormMap = new THREE.TextureLoader().load(crystalNormImg);
-  const metalTex = new THREE.TextureLoader().load(metalImg);
-  const metalNormMap = new THREE.TextureLoader().load(metalNormImg);
+  const crystalTex = new THREE.TextureLoader().load('../assets/textures/crystal-texture.jpg');
+  const crystalNormMap = new THREE.TextureLoader().load('../assets/normal-maps/crystal-map.jpg');
+  const metalTex = new THREE.TextureLoader().load('../assets/textures/metal-texture.jpg');
+  const metalNormMap = new THREE.TextureLoader().load('../assets/normal-maps/metal-map.jpg');
 
   return {
     crystalTex: crystalTex,

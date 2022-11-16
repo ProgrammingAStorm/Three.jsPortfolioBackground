@@ -2,7 +2,7 @@ import './style.css';
 
 import * as THREE from 'three';
 
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import * as INIT from './utils/init';
 
@@ -34,13 +34,13 @@ let spaceStuff;
 
 let composer;
 
-let controls;
+await init();
 
-init().then(() => {
-  controls = new OrbitControls(camera, renderer.domElement);
+const controls = new OrbitControls(camera, renderer.domElement);
 
-  animate();
-});
+animate();
+
+debugger
 
 async function init() {
   console.log('renderer started')
@@ -299,3 +299,4 @@ function rotateShape(shape, x, y, z) {
   shape.rotation.y += y;
   shape.rotation.z += z;
 }
+
