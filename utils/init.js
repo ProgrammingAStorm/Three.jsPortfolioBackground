@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import * as POSTPROCESSING from 'postprocessing';
+//import * as POSTPROCESSING from 'postprocessing';
 
 import { getOctaHed, getTorus, getTorusKnot } from './shapes';
 
@@ -52,72 +52,72 @@ async function initCore(coreTex, coreNormMap) {
         10000,       //distance
         35        //decay
       ),
-      spotLights: [
-        new THREE.SpotLight(  
-          0xff00ff, //color
-          0.1,        //intensity
-          0,        //distance
-          0.5,      //angle
-          0.8,        //penumbra
-          50         //decay
-        ),
-        new THREE.SpotLight(  
-          0xff00ff, //color
-          0.1,        //intensity
-          0,        //distance
-          0.5,      //angle
-          0.8,        //penumbra
-          50         //decay
-        ),new THREE.SpotLight(  
-          0xff00ff, //color
-          0.1,        //intensity
-          0,        //distance
-          0.5,      //angle
-          0.8,        //penumbra
-          50         //decay
-        ),new THREE.SpotLight(  
-          0xff00ff, //color
-          0.1,        //intensity
-          0,        //distance
-          0.5,      //angle
-          0.8,        //penumbra
-          50         //decay
-        ),new THREE.SpotLight(  
-          0xff00ff, //color
-          0.1,        //intensity
-          0,        //distance
-          0.5,      //angle
-          0.8,        //penumbra
-          50         //decay
-        ),new THREE.SpotLight(  
-          0xff00ff, //color
-          0.1,        //intensity
-          0,        //distance
-          0.5,      //angle
-          0.8,        //penumbra
-          50         //decay
-        )
-      ]
+      // spotLights: [
+      //   new THREE.SpotLight(  
+      //     0xff00ff, //color
+      //     0.1,        //intensity
+      //     0,        //distance
+      //     0.5,      //angle
+      //     0.8,        //penumbra
+      //     50         //decay
+      //   ),
+      //   new THREE.SpotLight(  
+      //     0xff00ff, //color
+      //     0.1,        //intensity
+      //     0,        //distance
+      //     0.5,      //angle
+      //     0.8,        //penumbra
+      //     50         //decay
+      //   ),new THREE.SpotLight(  
+      //     0xff00ff, //color
+      //     0.1,        //intensity
+      //     0,        //distance
+      //     0.5,      //angle
+      //     0.8,        //penumbra
+      //     50         //decay
+      //   ),new THREE.SpotLight(  
+      //     0xff00ff, //color
+      //     0.1,        //intensity
+      //     0,        //distance
+      //     0.5,      //angle
+      //     0.8,        //penumbra
+      //     50         //decay
+      //   ),new THREE.SpotLight(  
+      //     0xff00ff, //color
+      //     0.1,        //intensity
+      //     0,        //distance
+      //     0.5,      //angle
+      //     0.8,        //penumbra
+      //     50         //decay
+      //   ),new THREE.SpotLight(  
+      //     0xff00ff, //color
+      //     0.1,        //intensity
+      //     0,        //distance
+      //     0.5,      //angle
+      //     0.8,        //penumbra
+      //     50         //decay
+      //   )
+      // ]
   }; 
 
   core.lightShine.position.set(0, 0, 0);
   core.shape.add(core.lightShine);
-  core.spotLights.forEach(light => {      
-    //Set up shadow properties for the light    
-    light.shadow.mapSize.width = 2048; // default    
-    light.shadow.mapSize.height = 2048; // default    
-    light.shadow.camera.near = 0.5; // default   
-    light.shadow.camera.far = 500; // default    
-    light.shadow.focus = 1; // default      
-    core.shape.add(light);  
-  });
+  // core.spotLights.forEach(light => {      
+  //   //Set up shadow properties for the light    
+  //   light.shadow.mapSize.width = 2048; // default    
+  //   light.shadow.mapSize.height = 2048; // default    
+  //   light.shadow.camera.near = 0.5; // default   
+  //   light.shadow.camera.far = 500; // default    
+  //   light.shadow.focus = 1; // default      
+  //   core.shape.add(light);  
+  // });
 
-  core.spotLights[0].position.set(0, 2, 0);
-  core.spotLights[1].position.set(0, -2, 0);
-  core.spotLights[2].position.set(2, 0, 0);
-  core.spotLights[3].position.set(-2, 0, 0);
-  core.spotLights[4].position.set(0, 0, 2);
-  core.spotLights[5].position.set(0, 0, -2);
+  // core.spotLights[0].position.set(0, 2, 0);
+  // core.spotLights[1].position.set(0, -2, 0);
+  // core.spotLights[2].position.set(2, 0, 0);
+  // core.spotLights[3].position.set(-2, 0, 0);
+  // core.spotLights[4].position.set(0, 0, 2);
+  // core.spotLights[5].position.set(0, 0, -2);
 
   return core;
   //core.castShadow = true;
@@ -861,40 +861,41 @@ async function initSpaceStuff(count, stuffTex, stuffNormMap) {
   return spaceStuff; 
 }
 
-async function initGodRays(camera, shape, properties) {
-  if(!properties) {
-    properties = {};
-  }
+// async function initGodRays(camera, shape, properties) {
+//   if(!properties) {
+//     properties = {};
+//   }
 
-  return new POSTPROCESSING.GodRaysEffect(camera, shape, properties);
-}
-async function initRenderPass(scene, camera) {
-  return new POSTPROCESSING.RenderPass(scene, camera);
-}
-async function initSmaaEffect() {
-  const areaImage = new Image();
-  areaImage.src = POSTPROCESSING.SMAAEffect.areaImageDataURL;
+//   return new POSTPROCESSING.GodRaysEffect(camera, shape, properties);
+// }
 
-  const searchImage = new Image();
-  searchImage.src = POSTPROCESSING.SMAAEffect.searchImageDataURL;
+// async function initRenderPass(scene, camera) {
+//   return new POSTPROCESSING.RenderPass(scene, camera);
+// }
+// async function initSmaaEffect() {
+//   const areaImage = new Image();
+//   areaImage.src = POSTPROCESSING.SMAAEffect.areaImageDataURL;
 
-  return new POSTPROCESSING.SMAAEffect(searchImage,areaImage,1);
-}
-async function initEffectPass(camera, effects = []) {
-  const effectPass = new POSTPROCESSING.EffectPass(camera, effects);
-  effectPass.renderToScreen = true;
+//   const searchImage = new Image();
+//   searchImage.src = POSTPROCESSING.SMAAEffect.searchImageDataURL;
 
-  return effectPass;
-}
-async function initComposer(renderer, passes = []) {
-  const composer =  new POSTPROCESSING.EffectComposer(renderer);
+//   return new POSTPROCESSING.SMAAEffect(searchImage,areaImage,1);
+// }
+// async function initEffectPass(camera, effects = []) {
+//   const effectPass = new POSTPROCESSING.EffectPass(camera, effects);
+//   effectPass.renderToScreen = true;
 
-  passes.forEach(pass => {
-    composer.addPass(pass);
-  });
+//   return effectPass;
+// }
+// async function initComposer(renderer, passes = []) {
+//   const composer =  new POSTPROCESSING.EffectComposer(renderer);
 
-  return composer;
-}
+//   passes.forEach(pass => {
+//     composer.addPass(pass);
+//   });
+
+//   return composer;
+// }
 
 function getRnd(min, max, modifier) {
     let rand = (Math.floor(Math.random() * (max - min + 1) ) + min) * modifier;
@@ -913,9 +914,9 @@ export {
   initStars,
   initSpaceStuff,
 
-  initGodRays,
-  initRenderPass,
-  initSmaaEffect,
-  initEffectPass,
-  initComposer
+  // initGodRays,
+  // initRenderPass,
+  // initSmaaEffect,
+  // initEffectPass,
+  // initComposer
 }

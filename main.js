@@ -10,7 +10,7 @@ const scene = new THREE.Scene();
 
 scene.fog = new THREE.FogExp2(0x000e4d, 0.00045);
 
-const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 12500);
+const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 10000);
 
 camera.position.set(5, 5, 5);
 
@@ -40,7 +40,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 
 animate();
 
-debugger
+// debugger
 
 async function init() {
   console.log('renderer started')
@@ -72,28 +72,28 @@ async function init() {
 
     await renderJob;
 
-    INIT.initComposer(
-      renderer, 
-      [      
-        await INIT.initRenderPass(scene, camera),
+    // INIT.initComposer(
+    //   renderer, 
+    //   [      
+    //     await INIT.initRenderPass(scene, camera),
   
-        await INIT.initEffectPass(camera, ...[
+    //     await INIT.initEffectPass(camera, ...[
   
-          await INIT.initGodRays(camera, core.shape, {
-            resolutionScale: 1,
-            density: 10,
-            decay: 0.98,
-            weight: 0.1125,
-            samples: 196,
-            exposure: 1,
-          }),
+    //       await INIT.initGodRays(camera, core.shape, {
+    //         resolutionScale: 1,
+    //         density: 10,
+    //         decay: 0.98,
+    //         weight: 0.1125,
+    //         samples: 196,
+    //         exposure: 1,
+    //       }),
   
-          await INIT.initSmaaEffect(),
-        ]),
-      ]
-    ).then(cmpsr => {
-      composer = cmpsr;
-    })
+    //       await INIT.initSmaaEffect(),
+    //     ]),
+    //   ]
+    // ).then(cmpsr => {
+    //   composer = cmpsr;
+    // })
 
     console.log('stars started')
     INIT.initStars( objTextures.crystalTex, objTextures.crystalNormMap ).then(shape => {
@@ -212,6 +212,8 @@ async function init() {
       });
     });
   }
+
+  await renderJob;
 }
 
 function animate() {
@@ -291,7 +293,7 @@ function animate() {
   
   controls.update();
   
-  composer.render();
+  renderer.render(scene, camera);
 }
 
 function rotateShape(shape, x, y, z) {
