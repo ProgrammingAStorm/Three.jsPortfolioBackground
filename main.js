@@ -34,13 +34,11 @@ let spaceStuff;
 
 let composer;
 
-init().then(() => {
-  const controls = new OrbitControls(camera, renderer.domElement);
+await init();
 
-  animate(controls);
-});
+const controls = new OrbitControls(camera, renderer.domElement);
 
-
+animate();
 
 // debugger
 
@@ -218,7 +216,7 @@ async function init() {
   await renderJob;
 }
 
-function animate(controls) {
+function animate() {
   requestAnimationFrame(animate);
 
   //core
